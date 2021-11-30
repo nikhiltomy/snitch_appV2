@@ -313,13 +313,16 @@ export default {
   transition: "fade",
   provide() {
     return {
-      // options
+      basevariant:true,
       selectSize: this.updateFilter,
+      tocart:this.asd
     };
   },
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   data() {
     return {
+      filter:{},
+      Productdata:{},
       currentCate: "",
       breadcrumbs: [
         {
@@ -350,19 +353,7 @@ export default {
     );
     const pagination = computed(() => facetGetters.getPagination(result.value));
 
-    //For Variant fetch
-    const {
-      loading: productloading1,
-      products: products1,
-      search: search1,
-    } = useProduct("products");
-
-    onSSR(async () => {
-      await search1({
-        slug: "parrot-mint-green-pyjama",
-        selectedOptions: { Size: "M", Color: "Black" },
-      });
-    });
+    
 
     onSSR(async () => {
       await search(th.getFacetsFromURL());
@@ -373,24 +364,10 @@ export default {
 
     onMounted(() => {
       context.root.$scrollTo(context.root.$el, 2000);
-      // console.log(pagination ,'pagination')
-      // console.log(pagination)
-      // console.log(facets)
-      // console.log('hi', "Hii");
+     
       console.log("onMounted");
 
-      console.log(products1);
     });
-
-    // onBeforeUpdate(() => {
-    //   console.log('onUpdated')
-    //   onSSR(async () => {
-
-    //   await search1({ slug:'parrot-mint-green-pyjama', selectedOptions: {Size: 'M', Color: 'Black'} });
-    // });
-
-    // console.log(products1,'SSR')
-    // });
 
     return {
       ...uiState,
@@ -407,8 +384,6 @@ export default {
       isInCart,
       isFacetColor,
       toggleCategoryGridView,
-      productloading1,
-      products1,
     };
   },
   components: {
@@ -429,40 +404,42 @@ export default {
     Productgrid1,
   },
   methods: {
-    updateFilter(filter, slug) {
-      console.log(filter, "filter");
-      this.selectedProduct = { filter, slug };
-      console.log(this.selectedProduct);
-      //  const { loading: productloading1, products:products1, search:search1 } = useProduct(
-      //     "products"
-      //   );
-      //     onSSR(async () => {
-
-      //     await search1({ slug:'parrot-mint-green-pyjama', selectedOptions: {Size: 'M', Color: 'Black'} });
-      //   });
-
-      //  console.log(product1);
-
-      // if (options.value) {
-      //   Object.keys(options.value).forEach((attr) => {
-      //     if (attr in filter) {
-      //       //  console.log(attr);
-      //       return;
-      //     }
-
-      //     filter[attr] =
-      //       Object.keys(configuration.value).length > 0
-      //         ? configuration.value[attr]
-      //         : options.value[attr][0].value;
-
-      //   });
-      // }
-      //  variant = filter
-      //  console.log(configuration.value,'config')
-      //  console.log(variant,'Variant array');
-      //  console.log(fproduct ,"Final filterd product")
+    updateFilter(filter,p) {
+      
+      // this.addingToCart(filter,p)
+      this.filter=filter;
+      this.Productdata = p;
+  
     },
 
+    asd(){
+      this.addingToCart(this.filter,this.Productdata)
+    },
+
+     async addingToCart(filter,Productdata) {
+       console.log(Productdata,'test');
+       Productdata.variants.forEach(v=>{
+         if(v.title == filter.Size.toUpperCase()+ " / Black"){
+           Productdata.variantId = v.id;
+         }
+       })
+
+
+
+       await this.addItemToCart({product:Productdata,quantity: 1}).then(() => {
+        this.sendNotification({
+          key: "product_added",
+          message: `${Productdata.name} has been successfully added to your cart.`,
+          type: "success",
+          title: "Product added!",
+          icon: "check",
+        });
+        this.qty = 1;
+      });
+       
+    },
+
+   
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     HandleAddTocart(productObj) {
       this.addItemToCart(productObj).then(() => {

@@ -9,7 +9,7 @@
                   class="size-btn"
                   v-for="(attribs, a) in option"
                   :key="`item-${a}`"
-                  @click.prevent="selectSize({ [o]: attribs.value },product.handle)"
+                  @click.prevent="selectSize({ [o]: attribs.value },product)"
                 >
                   {{ attribs.value }}
                 </button>
@@ -42,7 +42,7 @@
 
 
     <div class="cart">
-      <button class="add-to-cart" @click.prevent="addingToCart({ product, quantity: parseInt(qty) })">
+      <button class="add-to-cart" @click.prevent="tocart()">
         <span
           class="sf-icon color-white size-sm"
           style="display:inline-block;vertical-align:middle"
@@ -74,7 +74,7 @@ import {
 } from "@vue-storefront/shopify";
 export default {
 props: ["product"],
-inject:['selectSize'],
+inject:['selectSize','tocart'],
   data() {
     return {
       options: productGetters.getAttributes(this.product),
@@ -103,6 +103,9 @@ inject:['selectSize'],
   margin: 0 2px;
   font-size: 16px;
   background-color: white;
+}
+button:focus{
+ border: 1px solid #000 !important;
 }
 .add-to-cart {
   display: block;

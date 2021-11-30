@@ -408,14 +408,14 @@ export default {
         context.root.$route.query
       );
     });
-
+ const configuration1 = computed(() => productGetters.getCategoryIds(product.value))
    onMounted(() => {
 
 
       // console.log(slug,'slug')
       console.log(products1,'Products1')
       // console.log(product, "Hi mounted");
-      console.log(configuration.value);
+      console.log(configuration1,'configuration1');
        console.log(options.value,'options');
 
       // console.log(context.root.$route.query);
@@ -537,7 +537,8 @@ export default {
       setBreadcrumb,
       atttLbl,
       checkoutURL,
-      products1
+      products1,
+      configuration1
     };
   },
   components: {

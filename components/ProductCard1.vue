@@ -19,7 +19,7 @@
       <p class="card__title">{{ title }}</p>
       <p class="card__price">Rs {{ price }}</p>
 
-     <BaseVariant :product="this.product"></BaseVariant>
+     <BaseVariant v-if="basevariant==true" :product="this.product"></BaseVariant>
     </div>
   </a>
 </template>
@@ -31,7 +31,7 @@ import BaseVariant from '~/components/BaseVariant.vue';
 export default {
   name: "PrCard1",
   props: ["title", "price", "image1", "image2", "link","product"],
-
+  inject:['basevariant'],
   setup() {
     return { productGetters };
   },
